@@ -1,25 +1,74 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react'
+import Nav from './comp/nav'
+import {BrowserRouter} from 'react-router-dom'
+import Rout from './comp/rout'
+import Footer from './comp/footer'
+import Homeproduct from './comp/home_product'
+// import Homeproduct from './comp/home_product'
+const App = () => {
+  
+  const [cart, setCart] = useState([])
+  
+  const [shop, setShop] = useState(Homeproduct)
+   
+  const [search, setSearch] = useState('')
+  
+  const Filter = (x) =>
+  {
+    const catefilter = Homeproduct.filter((product) => 
+    {
+      return product.cat === x 
+    })
+    setShop(catefilter)
+  }
+  const allcatefilter = () =>
+  {
+    setShop(Homeproduct)
+  }
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const searchlength = (search || []).length === 0
+  const searchproduct = () =>
+  {
+  if(searchlength)
+  {
+    alert("Пожалуйста, введите запрос!")
+    setShop(Homeproduct)
+  }
+  else
+  {
+      const searchfilter = Homeproduct.filter((x) => 
+      {
+        return x.cat === search
+      })
+      setShop(searchfilter)
+  }
 }
 
-export default App;
+  const addtocart = (product) =>
+  {
+    const exist = cart.find((x) => {
+      return x.id === product.id
+    })
+    if(exist)
+    {
+      alert("Этот продукт уже добавлен в корзину")
+    }
+    else
+    {
+      setCart([...cart, {...product, qty:1}])
+      alert("Добавленно в корзину")
+    }
+  }
+   console.log(cart)
+  return (
+    <>
+    <BrowserRouter>
+    <Nav search={search} setSearch={setSearch} searchproduct={searchproduct}/>
+    <Rout setCart={setCart} cart={cart} shop={shop} Filter={Filter} allcatefilter={allcatefilter} addtocart={addtocart}/>
+    <Footer />
+    </BrowserRouter>
+    </>
+  )
+}
+
+export default App
